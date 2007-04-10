@@ -1,0 +1,13 @@
+Source: grasp
+Maintainer: Alexander Shishkin <virtuoso@slind.org>
+Section: devel
+Priority: optional
+Standards-Version: 3.6.2
+Build-Depends: libc6-dev, libcurl3-dev
+
+Package: grasp
+Architecture: any
+Depends: ${shlibs:Depends}, git-buildpackage (>= 0.2.23)
+Description: maintains git repos with deb packages
+ This is SLIND. The rest is TODO.
+

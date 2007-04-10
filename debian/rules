@@ -1,0 +1,53 @@
+#!/usr/bin/make -f
+
+pkg := grasp
+dir := $(shell pwd)/debian/$(pkg)
+
+DEB_HOST_GNU_TYPE ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE 2>/dev/null)
+
+configure: configure-stamp
+configure-stamp: 
+	dh_testdir
+	
+	[ -f ./configure ] || sh autogen.sh
+	./configure --prefix=/usr --host=$(DEB_HOST_GNU_TYPE) --with-libpath=/usr/lib
+	touch $@
+
+clean:
+	dh_testdir
+	-$(MAKE) distclean
+
+	rm -f debian/$(pkg).substvars {configure,build,install}-stamp debian/files
+	rm -rf $(dir)
+
+build: build-stamp
+build-stamp: configure
+	$(MAKE)
+	touch $@
+
+install: build install-stamp
+install-stamp:
+	dh_testdir
+	dh_testroot
+
+	$(MAKE) install DESTDIR=$(dir)
+	dh_installdirs
+	touch $@
+
+binary-arch: install
+	dh_testdir
+	dh_testroot
+
+	dh_installchangelogs
+
+	dh_installdeb
+	dh_strip
+	dh_makeshlibs
+	dh_shlibdeps
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary: binary-arch
+
+.PHONY: configure clean build install binary-arch binary
