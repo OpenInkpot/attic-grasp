@@ -71,15 +71,15 @@ int cmd_getpkg(void *data)
 	char tarball_md5[MD5_MAX + 1];
 
 	for (i = 0; i < GRASP.ntarballs; i++) {
-		tarball_md5[MD5_MAX] = '\0';
+		tarball_md5[0] = tarball_md5[MD5_MAX] = '\0';
 		ret = md5sum(GRASP.tarball_path[i], tarball_md5);
-		if (ret)
-			return GE_ERROR;
 
-		DBG("[md5] %s: %s (local), %s (remote)\n",
-				GRASP.tarball_path[i], tarball_md5,
-				GRASP.tarball_md5[i]);
-		if (strncmp(tarball_md5, GRASP.tarball_md5[i], MD5_MAX)) {
+		if (!ret)
+			DBG("[md5] %s: %s (local), %s (remote)\n",
+					GRASP.tarball_path[i], tarball_md5,
+					GRASP.tarball_md5[i]);
+		if (ret ||
+			strncmp(tarball_md5, GRASP.tarball_md5[i], MD5_MAX)) {
 			DBG("md5 didn't match, redownloading\n");
 			SAY("Downloading source tarball from %s...\n",
 					GRASP.tarball_url[i]);
