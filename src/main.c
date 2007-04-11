@@ -30,7 +30,7 @@ char PWD[FILENAME_MAX];
 
 int main(int argc, char **argv, char **envp)
 {
-	int c, optidx = 0;
+	int c, optidx = 1;
 	int cmd = 0;
 	void *cmddata = NULL;
 	char *pkgname = NULL;
@@ -65,7 +65,6 @@ int main(int argc, char **argv, char **envp)
 				exit(EXIT_FAILURE);
 		}
 	}
-	optidx++;
 
 	/* save $PWD */
 	if (!getcwd(PWD, FILENAME_MAX)) {
