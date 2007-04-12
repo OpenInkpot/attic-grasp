@@ -31,6 +31,7 @@ extern char PWD[FILENAME_MAX];
 
 /* message.c */
 void help();
+void help_cmd();
 void version();
 
 /* config.c */
