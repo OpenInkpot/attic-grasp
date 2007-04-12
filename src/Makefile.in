@@ -55,7 +55,7 @@ am_grasp_OBJECTS = grasp-main.$(OBJEXT) grasp-transport.$(OBJEXT) \
 	grasp-package.$(OBJEXT) grasp-messages.$(OBJEXT)
 grasp_OBJECTS = $(am_grasp_OBJECTS)
 am__DEPENDENCIES_1 =
-grasp_DEPENDENCIES = $(am__DEPENDENCIES_1)
+grasp_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -124,6 +124,7 @@ PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
+POPT_LIBS = @POPT_LIBS@
 RANLIB = @RANLIB@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
@@ -180,7 +181,7 @@ grasp_SOURCES = main.c transport.c commands.c conffile.c graspfile.c \
 		system.c package.c messages.c
 
 grasp_CFLAGS = -DBUILD_DATE="\"$(BUILD_DATE)\""
-grasp_LDADD = $(CURL_LIBS)
+grasp_LDADD = $(CURL_LIBS) $(POPT_LIBS)
 all: all-am
 
 .SUFFIXES:

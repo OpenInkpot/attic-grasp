@@ -4,6 +4,9 @@ AM_INIT_AUTOMAKE()
 AC_PROG_CC
 AC_PROG_LIBTOOL
 
+AC_CHECK_LIB(popt, poptGetArg, [POPT_LIBS="-lpopt"], [echo "$0: libpopt is missing" >&2; exit 2])
+AC_SUBST(POPT_LIBS)
+
 AC_CHECK_LIB(curl, curl_getenv, [CURL_LIBS="-lcurl"], [echo "$0: libcurl is missing" >&2; exit 2])
 AC_SUBST(CURL_LIBS)
 
