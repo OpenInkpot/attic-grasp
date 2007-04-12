@@ -1,15 +1,14 @@
 #include "common.h"
-#include <getopt.h>
-#include <curl/curl.h>
+#include <popt.h>
 
 FILE *OUT[OUTFILES_MAX];
 int verbosity;
 
-static struct option long_options[] = {
-	{ "help",      0, NULL, 'h'  },
-	{ "version",   0, NULL, 'V'  },
-	{ "verbose",   0, NULL, 'v'  },
-	{ NULL,        0, NULL, '\0' },
+static struct poptOption opts_table[] = {
+	{ "help",      'h', 0, 0, 'h', "print help message"       },
+	{ "version",   'V', 0, 0, 'V', "show our version number"  },
+	{ "verbose",   'v', 0, 0, 'v', "turn on debugging output" },
+	{ NULL,        0,   0, NULL, 0 }
 };
 
 static cmdfn command[] = {
@@ -24,15 +23,23 @@ void init()
 	OUT[STD] = stdout;
 	OUT[ERR] = stderr;
 	OUT[LOG] = stdout; /* XXX */
+
+	/* save $PWD */
+	if (!getcwd(PWD, FILENAME_MAX)) {
+		perror("getcwd");
+		exit(EXIT_FAILURE);
+	}
 }
 
 char PWD[FILENAME_MAX];
 
-int main(int argc, char **argv, char **envp)
+int main(int argc, const char **argv, const char **envp)
 {
-	int c, optidx = 1;
+	int c;
+	poptContext optcon;
 	int cmd = 0;
 	void *cmddata = NULL;
+	char *cmdname = NULL;
 	char *pkgname = NULL;
 	uid_t uid = geteuid();
 
@@ -43,10 +50,8 @@ int main(int argc, char **argv, char **envp)
 		exit(EXIT_FAILURE);
 	}
 
-	while (1) {
-		c = getopt_long(argc, argv, "hvV", long_options, &optidx);
-		if (c == -1) break;
-
+	optcon = poptGetContext(NULL, argc, argv, opts_table, 0);
+	while ((c = poptGetNextOpt(optcon)) >= 0) {
 		switch (c) {
 			case 'h':
 				help();
@@ -66,9 +71,8 @@ int main(int argc, char **argv, char **envp)
 		}
 	}
 
-	/* save $PWD */
-	if (!getcwd(PWD, FILENAME_MAX)) {
-		perror("getcwd");
+	if (c < -1) {
+		help();
 		exit(EXIT_FAILURE);
 	}
 
@@ -77,45 +81,44 @@ int main(int argc, char **argv, char **envp)
 	if (c) exit(EXIT_FAILURE);
 
 	/* validate command name and arguments */
-	if ((argc - optidx) < 1) {
+	cmdname = (US)poptGetArg(optcon);
+	if (!cmdname) {
 		SAY("A command is required\n");
 		exit(EXIT_FAILURE);
 	}
 
-	DBG("cmd=%s\n", argv[optidx]);
-	if (!strcmp(argv[optidx], "getpkg")) {
-		if ((argc - optidx) < 2) {
+	DBG("cmd=%s\n", cmdname);
+	if (!strcmp(cmdname, "getpkg")) {
+		pkgname = (US)poptGetArg(optcon);
+		if (!pkgname) {
 			SHOUT("A package name is required\n");
 			exit(EXIT_FAILURE);
 		}
 
 		cmd = CMD_GETPKG;
 		cmddata = NULL;
-		pkgname = argv[++optidx];
-	} else if (!strcmp(argv[optidx], "update")) {
-		if ((argc - optidx) < 2) {
+	} else if (!strcmp(cmdname, "update")) {
+		pkgname = (US)poptGetArg(optcon);
+		if (!pkgname) {
 			SHOUT("A package name is required\n");
 			exit(EXIT_FAILURE);
 		}
 
 		cmd = CMD_UPDATE;
-		cmddata = NULL;
-		pkgname = argv[++optidx];
 
-		/* branch name is given */
-		if ((argc - optidx) == 2)
-			cmddata = (void *)argv[++optidx];
-	} else if (!strcmp(argv[optidx], "build")) {
-		if ((argc - optidx) < 2) {
+		/* in case a branch name is given */
+		cmddata = (void *)poptGetArg(optcon);
+	} else if (!strcmp(cmdname, "build")) {
+		pkgname = (US)poptGetArg(optcon);
+		if (!pkgname) {
 			SHOUT("A package name is required\n");
 			exit(EXIT_FAILURE);
 		}
 
 		cmd = CMD_BUILD;
 		cmddata = NULL;
-		pkgname = argv[++optidx];
 	} else {
-		SHOUT("Error: Unknown command %s, exiting.\n", argv[optidx]);
+		SHOUT("Error: Unknown command %s, exiting.\n", cmdname);
 		exit(EXIT_FAILURE);
 	}
 
