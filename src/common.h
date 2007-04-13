@@ -35,9 +35,11 @@ void version();
 
 /* config.c */
 int global_config_init();
+void global_config_done();
 
 /* graspfile.c */
 int get_grasp();
+void free_grasp();
 int put_grasp(char *filename);
 
 /* getpkg.c */

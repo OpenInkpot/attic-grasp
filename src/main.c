@@ -31,6 +31,12 @@ void init()
 	}
 }
 
+void leave(int code)
+{
+	global_config_done();
+	exit(code);
+}
+
 char PWD[FILENAME_MAX];
 
 int main(int argc, const char **argv, const char **envp)
@@ -84,7 +90,7 @@ int main(int argc, const char **argv, const char **envp)
 	cmdname = (US)poptGetArg(optcon);
 	if (!cmdname) {
 		SAY("A command is required\n");
-		exit(EXIT_FAILURE);
+		leave(EXIT_FAILURE);
 	}
 
 	DBG("cmd=%s\n", cmdname);
@@ -92,7 +98,7 @@ int main(int argc, const char **argv, const char **envp)
 		pkgname = (US)poptGetArg(optcon);
 		if (!pkgname) {
 			SHOUT("A package name is required\n");
-			exit(EXIT_FAILURE);
+			leave(EXIT_FAILURE);
 		}
 
 		cmd = CMD_GETPKG;
@@ -101,7 +107,7 @@ int main(int argc, const char **argv, const char **envp)
 		pkgname = (US)poptGetArg(optcon);
 		if (!pkgname) {
 			SHOUT("A package name is required\n");
-			exit(EXIT_FAILURE);
+			leave(EXIT_FAILURE);
 		}
 
 		cmd = CMD_UPDATE;
@@ -112,14 +118,14 @@ int main(int argc, const char **argv, const char **envp)
 		pkgname = (US)poptGetArg(optcon);
 		if (!pkgname) {
 			SHOUT("A package name is required\n");
-			exit(EXIT_FAILURE);
+			leave(EXIT_FAILURE);
 		}
 
 		cmd = CMD_BUILD;
 		cmddata = NULL;
 	} else {
 		SHOUT("Error: Unknown command %s, exiting.\n", cmdname);
-		exit(EXIT_FAILURE);
+		leave(EXIT_FAILURE);
 	}
 
 	/* execute the command */
@@ -129,7 +135,7 @@ int main(int argc, const char **argv, const char **envp)
 		case CMD_BUILD:
 			c = pkg_cmd_prologue(pkgname);
 			if (c == GE_ERROR)
-				exit(EXIT_FAILURE);
+				leave(EXIT_FAILURE);
 
 			/* we cannot do anything without package's git repo */
 			cmd = (c & GS_NOLOCALCOPY) ? CMD_GETPKG : cmd;
@@ -141,12 +147,12 @@ int main(int argc, const char **argv, const char **envp)
 			/* clean up */
 			c = pkg_cmd_epilogue();
 			if (c == GE_ERROR)
-				exit(EXIT_FAILURE);
+				leave(EXIT_FAILURE);
 			break;
 
 		default:
 			SHOUT("WTF?!\n");
-			exit(EXIT_FAILURE);
+			leave(EXIT_FAILURE);
 	}
 
 	return c;

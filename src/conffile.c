@@ -34,21 +34,21 @@ static int config_item_init(int n, US line)
 
 	if (!config[n]) return NO_CONFIG;
 
-	item = malloc(sizeof(config_item_t));
+	item = xmalloc(sizeof(config_item_t));
 	memset(tokens, 0, sizeof(tokens));
 	i = 0;
 	tokens[i] = (US) strtok((SU)line, " ");
 	while ((tokens[++i] = (US)strtok(NULL, " ")));
 	
-	item->name = malloc(ustrlen((SU)tokens[0]) + 1);
+	item->name = xmalloc(ustrlen((SU)tokens[0]) + 1);
 	strcpy((SU)item->name, (SU)tokens[0]);
 	item->values = i-1;
 	item->next = NULL;
 	item->prev = NULL;
 
-	item->value = malloc(sizeof(char *) * item->values);
+	item->value = xmalloc(sizeof(char *) * item->values);
 	for (i = 1; i <= item->values; i++) {
-		item->value[i-1] = malloc(ustrlen((SU)tokens[i])+1);
+		item->value[i-1] = xmalloc(ustrlen((SU)tokens[i])+1);
 		strcpy((SU)item->value[i-1], (SU)tokens[i]);
 	}
 	
@@ -74,12 +74,12 @@ int config_read(US file)
 	while (i < MAX_CONFIG_FILES && config[i]) i++;
 	if (i == MAX_CONFIG_FILES) return TOO_MANY_CONFIGS;
 	
-	config[i] = malloc(sizeof(config_t));
+	config[i] = xmalloc(sizeof(config_t));
 	current = NULL;
 	config[i]->first_item = NULL;
 	config[i]->last_item  = NULL;
 	if (file) {
-		config[i]->path = malloc(ustrlen((SU)file) + 1);
+		config[i]->path = xmalloc(ustrlen((SU)file) + 1);
 		strcpy((SU)config[i]->path, (SU)file);
 	}
 
@@ -245,5 +245,10 @@ int global_config_init()
 	CONFIG_VALIDATE_OPT(CONFIG.reget_grasp, global_config, "reget_grasp");
 
 	return 0;
+}
+
+void global_config_done()
+{
+	config_dispose(global_config);
 }
 

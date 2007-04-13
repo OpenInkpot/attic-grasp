@@ -31,4 +31,18 @@ typedef void*         VP;
 #define ustrncpy(__a,__b,__n) strncpy((SU)__a,(SU)__b,__n)
 #define uatoi(__a) atoi((SU)__a)
 
+#define xmalloc(__s) ({                    \
+		void *__ret = malloc(__s); \
+		if (!__ret)                \
+			return GE_ERROR;   \
+		__ret;                     \
+	})
+
+#define xfree(__p) do {                      \
+		void **__P = (void *)&(__p); \
+		if (*__P)                    \
+			free(*__P);          \
+		*__P = NULL;                 \
+	} while (0)
+
 #endif

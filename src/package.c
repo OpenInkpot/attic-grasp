@@ -106,6 +106,8 @@ int pkg_cmd_epilogue()
 		}
 	}
 
+	free_grasp();
+
 	return GE_OK;
 }
 

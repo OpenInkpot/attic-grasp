@@ -49,11 +49,11 @@ int get_grasp()
 
 	/* minimal number of tarballs is 0 (for native packages) */
 	GRASP.ntarballs = config_get_item_values(grasp_config, "tarball_url");
-	GRASP.tarball_url = malloc(GRASP.ntarballs * sizeof(char *));
-	GRASP.tarball_md5 = malloc(GRASP.ntarballs * sizeof(char *));
-	GRASP.tarball_path = malloc(GRASP.ntarballs * sizeof(char *));
+	GRASP.tarball_url = xmalloc(GRASP.ntarballs * sizeof(char *));
+	GRASP.tarball_md5 = xmalloc(GRASP.ntarballs * sizeof(char *));
+	GRASP.tarball_path = xmalloc(GRASP.ntarballs * sizeof(char *));
 	for (c = 0; c < GRASP.ntarballs; c++)
-		GRASP.tarball_path[c] = malloc(FILENAME_MAX);
+		GRASP.tarball_path[c] = xmalloc(FILENAME_MAX);
 
 	CONFIG_VALIDATE_OPTM(GRASP.tarball_url, grasp_config, "tarball_url",
 			GRASP.ntarballs);
@@ -67,7 +67,7 @@ int get_grasp()
 		return GE_ERROR;
 	}
 
-	GRASP.branch = malloc(GRASP.nbranches * sizeof(char *));
+	GRASP.branch = xmalloc(GRASP.nbranches * sizeof(char *));
 	CONFIG_VALIDATE_OPTM(GRASP.branch, grasp_config, "branch",
 			GRASP.nbranches);
 	if (GRASP.nbranches < GRASP.ntarballs) {
@@ -76,6 +76,19 @@ int get_grasp()
 	}
 
 	return 0;
+}
+
+void free_grasp()
+{
+	int c;
+
+	xfree(GRASP.tarball_url);
+	xfree(GRASP.tarball_md5);
+	for (c = 0; c < GRASP.ntarballs; c++)
+		xfree(GRASP.tarball_path[c]);
+	xfree(GRASP.tarball_path);
+
+	config_dispose(grasp_config);
 }
 
 int put_grasp(char *filename)
