@@ -5,9 +5,20 @@ FILE *OUT[OUTFILES_MAX];
 int verbosity;
 
 static struct poptOption opts_table[] = {
-	{ "help",      'h', 0, 0, 'h', "print help message"       },
-	{ "version",   'V', 0, 0, 'V', "show our version number"  },
+	/* CONFIG-wise options */
+	{ "gitbase-url",  'U', POPT_ARG_STRING, &CONFIG.gitbase_url, 0,
+	  "the base URL for your git repositories" },
+	{ "tarballs-dir", 'T', POPT_ARG_STRING, &CONFIG.tarballs_dir, 0,
+	  "local directory that will hold packages' upstream tarballs" },
+	{ "gitrepos-dir", 'G', POPT_ARG_STRING, &CONFIG.gitrepos_dir, 0,
+	  "local directory that will hold packages' git repos" },
+	{ "reget-grasp",  'a', 0, 0, 'a', "always redownload remote grasp" },
+
+	/* simple options */
 	{ "verbose",   'v', 0, 0, 'v', "turn on debugging output" },
+	{ "version",   'V', 0, 0, 'V', "show our version number"  },
+	{ "help",      'h', 0, 0, 'h', "print help message"       },
+
 	{ NULL,        0,   0, NULL, 0 }
 };
 
@@ -57,10 +68,13 @@ int main(int argc, const char **argv, const char **envp)
 	}
 
 	optcon = poptGetContext(NULL, argc, argv, opts_table, 0);
+	poptSetOtherOptionHelp(optcon, "[<option>] <command> [<package> [<branch>]]");
 	while ((c = poptGetNextOpt(optcon)) >= 0) {
 		switch (c) {
 			case 'h':
 				help();
+				poptPrintHelp(optcon, stdout, 0);
+				help_cmd();
 				exit(EXIT_SUCCESS);
 
 			case 'V':
@@ -78,7 +92,8 @@ int main(int argc, const char **argv, const char **envp)
 	}
 
 	if (c < -1) {
-		help();
+		poptPrintUsage(optcon, stderr, 0);
+		poptFreeContext(optcon);
 		exit(EXIT_FAILURE);
 	}
 
