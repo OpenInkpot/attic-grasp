@@ -4,13 +4,24 @@
 FILE *OUT[OUTFILES_MAX];
 int verbosity;
 
+/* cli overrides for global config parameters */
+static char *CMDLINE_gitbase_url;
+static char *CMDLINE_tarballs_dir;
+static char *CMDLINE_gitrepos_dir;
+
+#define CMDLINE_CONFIG(__c, __n) \
+	if (CMDLINE_ ## __n) { \
+		free(__c); \
+		__c = CMDLINE_ ## __n; \
+	}
+
 static struct poptOption opts_table[] = {
 	/* CONFIG-wise options */
-	{ "gitbase-url",  'U', POPT_ARG_STRING, &CONFIG.gitbase_url, 0,
+	{ "gitbase-url",  'U', POPT_ARG_STRING, &CMDLINE_gitbase_url, 0,
 	  "the base URL for your git repositories" },
-	{ "tarballs-dir", 'T', POPT_ARG_STRING, &CONFIG.tarballs_dir, 0,
+	{ "tarballs-dir", 'T', POPT_ARG_STRING, &CMDLINE_tarballs_dir, 0,
 	  "local directory that will hold packages' upstream tarballs" },
-	{ "gitrepos-dir", 'G', POPT_ARG_STRING, &CONFIG.gitrepos_dir, 0,
+	{ "gitrepos-dir", 'G', POPT_ARG_STRING, &CMDLINE_gitrepos_dir, 0,
 	  "local directory that will hold packages' git repos" },
 	{ "reget-grasp",  'a', 0, 0, 'a', "always redownload remote grasp" },
 
@@ -28,27 +39,44 @@ static cmdfn command[] = {
 	cmd_build
 };
 
+char PWD[PATH_MAX];
+
+static struct sigaction __sigint_act_saved;
+
+static void sigint_handler(int sig)
+{
+	SAY("Control-C pressed.\n");
+	signal(sig, NULL);
+	leave(EXIT_FAILURE, 0);
+}
+
 void init()
 {
+	struct sigaction sa;
+
 	verbosity = VERB_NORMAL;
 	OUT[STD] = stdout;
 	OUT[ERR] = stderr;
 	OUT[LOG] = stdout; /* XXX */
 
 	/* save $PWD */
-	if (!getcwd(PWD, FILENAME_MAX)) {
+	if (!getcwd(PWD, PATH_MAX)) {
 		perror("getcwd");
 		exit(EXIT_FAILURE);
 	}
+
+	sa.sa_handler = sigint_handler;
+	sigfillset(&sa.sa_mask);
+	sigaction(SIGINT, &sa, &__sigint_act_saved);
 }
 
-void leave(int code)
+void leave(int code, int full)
 {
-	global_config_done();
+	if (full)
+		global_config_done();
+	sigaction(SIGINT, &__sigint_act_saved, NULL);
 	exit(code);
 }
-
-char PWD[FILENAME_MAX];
 
 int main(int argc, const char **argv, const char **envp)
 {
@@ -64,7 +92,7 @@ int main(int argc, const char **argv, const char **envp)
 	if (uid == 0) {
 		SHOUT("Under no circumstances is grasp going to work "
 				"with effective uid of root.\n");
-		exit(EXIT_FAILURE);
+		leave(EXIT_FAILURE, 0);
 	}
 
 	optcon = poptGetContext(NULL, argc, argv, opts_table, 0);
@@ -75,11 +103,11 @@ int main(int argc, const char **argv, const char **envp)
 				help();
 				poptPrintHelp(optcon, stdout, 0);
 				help_cmd();
-				exit(EXIT_SUCCESS);
+				leave(EXIT_SUCCESS, 0);
 
 			case 'V':
 				version();
-				exit(EXIT_SUCCESS);
+				leave(EXIT_SUCCESS, 0);
 
 			case 'v':
 				verbosity = VERB_DEBUG;
@@ -87,25 +115,29 @@ int main(int argc, const char **argv, const char **envp)
 
 			default:
 				SHOUT("this option just sucks ass\n");
-				exit(EXIT_FAILURE);
+				leave(EXIT_FAILURE, 0);
 		}
 	}
 
 	if (c < -1) {
 		poptPrintUsage(optcon, stderr, 0);
 		poptFreeContext(optcon);
-		exit(EXIT_FAILURE);
+		leave(EXIT_FAILURE, 0);
 	}
 
 	/* read global config */
 	c = global_config_init();
-	if (c) exit(EXIT_FAILURE);
+	if (c) leave(EXIT_FAILURE, 0);
+
+	CMDLINE_CONFIG(CONFIG.gitbase_url, gitbase_url)
+	CMDLINE_CONFIG(CONFIG.gitrepos_dir, gitrepos_dir)
+	CMDLINE_CONFIG(CONFIG.tarballs_dir, tarballs_dir)
 
 	/* validate command name and arguments */
 	cmdname = (US)poptGetArg(optcon);
 	if (!cmdname) {
 		SAY("A command is required\n");
-		leave(EXIT_FAILURE);
+		leave(EXIT_FAILURE, 1);
 	}
 
 	DBG("cmd=%s\n", cmdname);
@@ -113,7 +145,7 @@ int main(int argc, const char **argv, const char **envp)
 		pkgname = (US)poptGetArg(optcon);
 		if (!pkgname) {
 			SHOUT("A package name is required\n");
-			leave(EXIT_FAILURE);
+			leave(EXIT_FAILURE, 1);
 		}
 
 		cmd = CMD_GETPKG;
@@ -122,7 +154,7 @@ int main(int argc, const char **argv, const char **envp)
 		pkgname = (US)poptGetArg(optcon);
 		if (!pkgname) {
 			SHOUT("A package name is required\n");
-			leave(EXIT_FAILURE);
+			leave(EXIT_FAILURE, 1);
 		}
 
 		cmd = CMD_UPDATE;
@@ -133,14 +165,14 @@ int main(int argc, const char **argv, const char **envp)
 		pkgname = (US)poptGetArg(optcon);
 		if (!pkgname) {
 			SHOUT("A package name is required\n");
-			leave(EXIT_FAILURE);
+			leave(EXIT_FAILURE, 1);
 		}
 
 		cmd = CMD_BUILD;
 		cmddata = NULL;
 	} else {
 		SHOUT("Error: Unknown command %s, exiting.\n", cmdname);
-		leave(EXIT_FAILURE);
+		leave(EXIT_FAILURE, 0);
 	}
 
 	/* execute the command */
@@ -150,7 +182,7 @@ int main(int argc, const char **argv, const char **envp)
 		case CMD_BUILD:
 			c = pkg_cmd_prologue(pkgname);
 			if (c == GE_ERROR)
-				leave(EXIT_FAILURE);
+				leave(EXIT_FAILURE, 1);
 
 			/* we cannot do anything without package's git repo */
 			cmd = (c & GS_NOLOCALCOPY) ? CMD_GETPKG : cmd;
@@ -162,12 +194,12 @@ int main(int argc, const char **argv, const char **envp)
 			/* clean up */
 			c = pkg_cmd_epilogue();
 			if (c == GE_ERROR)
-				leave(EXIT_FAILURE);
+				leave(EXIT_FAILURE, 1);
 			break;
 
 		default:
 			SHOUT("WTF?!\n");
-			leave(EXIT_FAILURE);
+			leave(EXIT_FAILURE, 1);
 	}
 
 	return c;
