@@ -13,20 +13,22 @@ int get_grasp()
 	char graspfile_url[URL_MAX];
 	int c;
 
+	/* compute grasp file URL */
 	snprintf(graspfile_url, URL_MAX, "%s/%s.git/grasp",
 			CONFIG.gitbase_url, GRASP.pkgname);
 
 	/* check if local git repo exists at this point */
-	snprintf(GRASP.graspfile_local, FILENAME_MAX, "%s/%s/.git",
+	snprintf(GRASP.graspfile_local, PATH_MAX, "%s/%s/.git",
 			CONFIG.gitrepos_dir, GRASP.pkgname);
 	c = check_dir(GRASP.graspfile_local);
+
 	if (c != GE_OK) {
 		DBG("local git repo doesn't exist, will save grasp to /tmp\n");
-		snprintf(GRASP.graspfile_local, FILENAME_MAX, "/tmp/%s.grasp",
+		snprintf(GRASP.graspfile_local, PATH_MAX, "/tmp/%s.grasp",
 				GRASP.pkgname);
 		GRASP.move_grasp = 1;
 	} else {
-		snprintf(GRASP.graspfile_local, FILENAME_MAX, "%s/%s/.git/grasp",
+		snprintf(GRASP.graspfile_local, PATH_MAX, "%s/%s/.git/grasp",
 				CONFIG.gitrepos_dir, GRASP.pkgname);
 		c = check_file(GRASP.graspfile_local);
 		if (c == GE_OK)
@@ -53,7 +55,7 @@ int get_grasp()
 	GRASP.tarball_md5 = xmalloc(GRASP.ntarballs * sizeof(char *));
 	GRASP.tarball_path = xmalloc(GRASP.ntarballs * sizeof(char *));
 	for (c = 0; c < GRASP.ntarballs; c++)
-		GRASP.tarball_path[c] = xmalloc(FILENAME_MAX);
+		GRASP.tarball_path[c] = xmalloc(PATH_MAX);
 
 	CONFIG_VALIDATE_OPTM(GRASP.tarball_url, grasp_config, "tarball_url",
 			GRASP.ntarballs);

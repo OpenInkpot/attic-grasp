@@ -36,10 +36,10 @@ int mv(char *oldpath, char *newpath)
 int md5sum(char *file, char *buf)
 {
 	FILE *p;
-	char cmd[FILENAME_MAX];
+	char cmd[PATH_MAX];
 
 	if (check_file(file) != GE_OK) return GE_ERROR;
-	snprintf(cmd, FILENAME_MAX, "/usr/bin/md5sum %s", file);
+	snprintf(cmd, PATH_MAX, "/usr/bin/md5sum %s", file);
 	p = popen(cmd, "r");
 	if (!p)
 		return GE_ERROR;
@@ -53,10 +53,10 @@ int md5sum(char *file, char *buf)
 void write_gbp(char *pkgname)
 {
 	FILE *gbp;
-	char gbpfile_name[FILENAME_MAX];
+	char gbpfile_name[PATH_MAX];
 	int i;
 
-	snprintf(gbpfile_name, FILENAME_MAX, "%s/%s/.git/gbp.conf",
+	snprintf(gbpfile_name, PATH_MAX, "%s/%s/.git/gbp.conf",
 			CONFIG.gitrepos_dir, pkgname);
 	SAY("Writing %s\n", gbpfile_name);
 	gbp = fopen(gbpfile_name, "w");
@@ -75,10 +75,10 @@ void write_gbp(char *pkgname)
 int git_clone(char *url)
 {
 	char *argv[] = { "git", "clone", url, NULL, NULL };
-	char git_dir[FILENAME_MAX];
+	char git_dir[PATH_MAX];
 	int ret;
 
-	snprintf(git_dir, FILENAME_MAX, "%s/%s", CONFIG.gitrepos_dir,
+	snprintf(git_dir, PATH_MAX, "%s/%s", CONFIG.gitrepos_dir,
 			GRASP.pkgname);
 	argv[3] = git_dir;
 	ret = spawn("/usr/bin/git", argv);
@@ -90,10 +90,10 @@ int git_clone(char *url)
 int git_pull(char *url, char *branch)
 {
 	char *argv[] = { "git", "pull", url, branch, NULL };
-	char git_dir[FILENAME_MAX];
+	char git_dir[PATH_MAX];
 	int ret;
 
-	snprintf(git_dir, FILENAME_MAX, "%s/%s/.git", CONFIG.gitrepos_dir,
+	snprintf(git_dir, PATH_MAX, "%s/%s/.git", CONFIG.gitrepos_dir,
 			GRASP.pkgname);
 	setenv("GIT_DIR", git_dir, 1);
 	ret = spawn("/usr/bin/git", argv);
@@ -106,10 +106,10 @@ int git_pull(char *url, char *branch)
 int git_checkout(char *branch)
 {
 	char *argv[] = { "git", "checkout", branch, NULL };
-	char git_dir[FILENAME_MAX];
+	char git_dir[PATH_MAX];
 	int ret;
 
-	snprintf(git_dir, FILENAME_MAX, "%s/%s", CONFIG.gitrepos_dir,
+	snprintf(git_dir, PATH_MAX, "%s/%s", CONFIG.gitrepos_dir,
 			GRASP.pkgname);
 	chdir(git_dir);
 	ret = spawn("/usr/bin/git", argv);
@@ -138,7 +138,7 @@ int git_buildpackage(char *branch)
 {
 	char *argv[] = { "git-buildpackage", "-uc", "-us", "-rfakeroot",
 		"-d", "-S", NULL, NULL };
-	char git_dir[FILENAME_MAX];
+	char git_dir[PATH_MAX];
 	int ret;
 
 	/* make sure we're on a proper branch */
@@ -154,7 +154,7 @@ int git_buildpackage(char *branch)
 			return GE_ERROR;
 	}
 
-	snprintf(git_dir, FILENAME_MAX, "%s/%s", CONFIG.gitrepos_dir,
+	snprintf(git_dir, PATH_MAX, "%s/%s", CONFIG.gitrepos_dir,
 			GRASP.pkgname);
 	chdir(git_dir);
 	ret = spawn("/usr/bin/git-buildpackage", argv);

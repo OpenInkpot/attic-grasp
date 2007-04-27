@@ -22,7 +22,7 @@ int pkg_cmd_prologue(char *pkgname)
 	strncpy(GRASP.pkgname, pkgname, PKGNAME_MAX);
 
 	/* -- path to local git repo */
-	snprintf(GRASP.gitrepo_path, FILENAME_MAX, "%s/%s", CONFIG.gitrepos_dir,
+	snprintf(GRASP.gitrepo_path, PATH_MAX, "%s/%s", CONFIG.gitrepos_dir,
 			GRASP.pkgname);
 
 	/* check if local copy already exists */
@@ -82,7 +82,7 @@ int pkg_cmd_prologue(char *pkgname)
 		if (!p) p = GRASP.tarball_url[i];
 		p++;
 
-		snprintf(GRASP.tarball_path[i], FILENAME_MAX, "%s/%s",
+		snprintf(GRASP.tarball_path[i], PATH_MAX, "%s/%s",
 				CONFIG.tarballs_dir, p);
 		DBG("tarball_path[%d]: %s\n", i, GRASP.tarball_path[i]);
 	}
@@ -92,11 +92,11 @@ int pkg_cmd_prologue(char *pkgname)
 
 int pkg_cmd_epilogue()
 {
-	char newpath[FILENAME_MAX];
+	char newpath[PATH_MAX];
 	int ret;
 
 	if (GRASP.move_grasp) {
-		snprintf(newpath, FILENAME_MAX, "%s/%s/.git/grasp",
+		snprintf(newpath, PATH_MAX, "%s/%s/.git/grasp",
 				CONFIG.gitrepos_dir, GRASP.pkgname);
 		ret = mv(GRASP.graspfile_local, newpath);
 		/*ret = put_grasp(newpath);*/

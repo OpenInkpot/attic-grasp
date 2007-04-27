@@ -27,6 +27,11 @@ static void output(int w, int v, const char *fmt, ...)
 
 #define SAY(fmt, args...)                      \
 	output(STD, VERB_NORMAL, fmt, ## args)
+#define SAY2(fmt, args...)                     \
+	do {                                   \
+		output(STD, VERB_NORMAL, fmt, ## args); \
+		fflush(OUT[STD]);              \
+	} while (0);
 #define DBG(fmt, args...)                      \
 	output(ERR, VERB_DEBUG, "[DBG] " fmt, ## args)
 #define SHOUT(fmt, args...)                    \

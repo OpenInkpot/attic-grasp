@@ -229,9 +229,9 @@ global_config_t CONFIG;
 int global_config_init()
 {
 	char *homedir = getenv("HOME");
-	char confpath[FILENAME_MAX];
+	char confpath[PATH_MAX];
 
-	snprintf(confpath, FILENAME_MAX, "%s/.grasp", homedir);
+	snprintf(confpath, PATH_MAX, "%s/.grasp", homedir);
 	global_config = config_read(confpath);
 	if (global_config < 0) {
 		printf("No config file found, expected: %s\n", confpath);

@@ -103,8 +103,8 @@ typedef struct __grasp_config {
 	int  ntarballs;       /* number of tarballs for the package */
 	int  nbranches;       /* number of branches for the package */
 	int  move_grasp;      /* do move /tmp/grasp to pkg/.git     */
-	char gitrepo_path[FILENAME_MAX]; /* paths to local git repo */
-	char graspfile_local[FILENAME_MAX]; /* local copy of grasp  */
+	char gitrepo_path[PATH_MAX];     /* paths to local git repo */
+	char graspfile_local[PATH_MAX];     /* local copy of grasp  */
 }       grasp_config_t;
 
 extern grasp_config_t GRASP;
