@@ -32,6 +32,7 @@ static int file_write_cb(void *buf, size_t size, size_t nmemb, void *stream)
 		h->file = fopen(h->name, "w");
 		if (!h->file) return -1;
 	}
+	SAY2(".");
 	return fwrite(buf, size, nmemb, h->file);
 }
 
@@ -44,6 +45,7 @@ static int mem_write_cb(void *buf, size_t size, size_t nmemb, void *stream)
 	for (i = 0; i < nmemb; i++)
 		memcpy(h->addr + (i * size),
 			buf + (i * size), size);
+	SAY2(".");
 	return nmemb;
 }
 
@@ -54,12 +56,13 @@ int http_get_file(char *url, char *name)
 
 	prepare_get();
 
-	DBG("downloading %s\n", url);
+	SAY("Downloading %s ", url);
 	curl_easy_setopt(curl, CURLOPT_URL, url);
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, file_write_cb);
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &h);
 
 	ret = curl_easy_perform(curl);
+	SAY("\n");
 	DBG("perform code: %d\n", ret);
 	if (ret) goto out_err;
 
