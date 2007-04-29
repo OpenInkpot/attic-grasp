@@ -72,6 +72,17 @@ int pkg_cmd_prologue(char *pkgname)
 		return GE_ERROR;
 	}
 
+	/* output repository */
+	snprintf(GRASP.pkg_out_dir, PATH_MAX, "%s/%s",
+			CONFIG.output_dir, GRASP.pkgname);
+	r = check_and_create_dir(GRASP.pkg_out_dir);
+	if (r != GE_OK) {
+		SHOUT("Error: failed to create %s.\n"
+				"cannot proceed from here\n",
+				GRASP.pkg_out_dir);
+		return GE_ERROR;
+	}
+
 	r = get_grasp(GRASP.pkgname);
 	if (r)
 		return GE_ERROR;

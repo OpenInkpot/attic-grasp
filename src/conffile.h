@@ -82,6 +82,7 @@ typedef struct __global_config {
 	char *gitbase_url;    /* url of a root for git repos      */
 	char *gitrepos_dir;   /* local path to store git repos in */
 	char *tarballs_dir;   /* local path to store tarballs in  */
+	char *output_dir;     /* local path to the output repo    */
 	char *reget_grasp;    /* do download grasp file anyway    */
 }       global_config_t;
 
@@ -105,6 +106,7 @@ typedef struct __grasp_config {
 	int  move_grasp;      /* do move /tmp/grasp to pkg/.git     */
 	char gitrepo_path[PATH_MAX];     /* paths to local git repo */
 	char graspfile_local[PATH_MAX];     /* local copy of grasp  */
+	char pkg_out_dir[PATH_MAX];      /* pkgs dir in output repo */
 }       grasp_config_t;
 
 extern grasp_config_t GRASP;

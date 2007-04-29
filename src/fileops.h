@@ -78,7 +78,7 @@ static __inline__ int check_and_create_dir(char *path)
 	int r = check_dir(path);
 
 	if (r == GE_NOENT) {
-		if (mkdir(path, 0755)) {
+		if (mkdir_p(path, 0755)) {
 			DBG("# failed to create %s\n", path);
 			return GE_ERROR;
 		}

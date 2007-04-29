@@ -11,7 +11,7 @@ int cmd_build(void *data)
 	int ret, i;
 
 	for (i = 0; i < GRASP.nbranches; i++) {
-		ret = git_buildpackage(GRASP.branch[i]);
+		ret = git_buildpackage(i);
 		if (ret != GE_OK)
 			return ret;
 	}

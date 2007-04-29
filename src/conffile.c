@@ -242,6 +242,7 @@ int global_config_init()
 	CONFIG_VALIDATE_OPT(CONFIG.gitbase_url, global_config, "gitbase_url");
 	CONFIG_VALIDATE_OPT(CONFIG.gitrepos_dir, global_config, "gitrepos_dir");
 	CONFIG_VALIDATE_OPT(CONFIG.tarballs_dir, global_config, "tarballs_dir");
+	CONFIG_VALIDATE_OPT(CONFIG.output_dir, global_config, "output_dir");
 	CONFIG_VALIDATE_OPT(CONFIG.reget_grasp, global_config, "reget_grasp");
 
 	return 0;
