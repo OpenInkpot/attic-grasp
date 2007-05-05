@@ -99,6 +99,10 @@ int main(int argc, const char **argv, const char **envp)
 	poptSetOtherOptionHelp(optcon, "[<option>] <command> [<package> [<branch>]]");
 	while ((c = poptGetNextOpt(optcon)) >= 0) {
 		switch (c) {
+			case 'a':
+				CONFIG.reget_grasp = 0;
+				break;
+
 			case 'h':
 				help();
 				poptPrintHelp(optcon, stdout, 0);

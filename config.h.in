@@ -1,5 +1,11 @@
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
+/* "Path to cp executable" */
+#undef CP_BIN_PATH
+
+/* "Path to git executable" */
+#undef GIT_BIN_PATH
+
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 
@@ -30,6 +36,15 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
+/* "Path to md5sum executable" */
+#undef MD5SUM_BIN_PATH
+
+/* "Path to mkdir executable" */
+#undef MKDIR_BIN_PATH
+
+/* "Path to mv executable" */
+#undef MV_BIN_PATH
+
 /* Name of package */
 #undef PACKAGE
 
@@ -48,8 +63,14 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
+/* "Path to rm executable" */
+#undef RM_BIN_PATH
+
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
+
+/* "Path to tar executable" */
+#undef TAR_BIN_PATH
 
 /* Version number of package */
 #undef VERSION

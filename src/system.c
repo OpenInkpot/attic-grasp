@@ -26,7 +26,7 @@ int mv(char *oldpath, char *newpath)
 	char *argv[] = { "mv", oldpath, newpath, NULL };
 	int ret;
 
-	ret = spawn("/bin/mv", argv);
+	ret = spawn(MV_BIN_PATH, argv);
 	if (ret)
 		return GE_ERROR;
 
@@ -38,7 +38,7 @@ int tar_zxf(char *tarball, char *dir)
 	char *argv[] = { "tar", "vzxf", tarball, "-C", dir, NULL };
 	int ret;
 
-	ret = spawn("/bin/tar", argv);
+	ret = spawn(TAR_BIN_PATH, argv);
 	if (ret)
 		return GE_ERROR;
 
@@ -50,7 +50,7 @@ int rm_rf(char *dir)
 	char *argv[] = { "rm", "-rf", dir, NULL };
 	int ret;
 
-	ret = spawn("/bin/rm", argv);
+	ret = spawn(RM_BIN_PATH, argv);
 	if (ret)
 		return GE_ERROR;
 
@@ -62,7 +62,7 @@ int mkdir_p(char *dst, mode_t mode)
 	char *argv[] = { "mkdir", "-p", dst, NULL };
 	int ret;
 
-	ret = spawn("/bin/mkdir", argv);
+	ret = spawn(MKDIR_BIN_PATH, argv);
 	if (ret)
 		return GE_ERROR;
 
@@ -74,7 +74,7 @@ int copy(char *src, char *dst)
 	char *argv[] = { "cp", src, dst, NULL };
 	int ret;
 
-	ret = spawn("/bin/cp", argv);
+	ret = spawn(CP_BIN_PATH, argv);
 	if (ret)
 		return GE_ERROR;
 
@@ -98,7 +98,7 @@ int md5sum(char *file, char *buf)
 	char cmd[PATH_MAX];
 
 	if (check_file(file) != GE_OK) return GE_ERROR;
-	snprintf(cmd, PATH_MAX, "/usr/bin/md5sum %s", file);
+	snprintf(cmd, PATH_MAX, "%s %s", MD5SUM_BIN_PATH, file);
 	p = popen(cmd, "r");
 	if (!p)
 		return GE_ERROR;
@@ -140,7 +140,7 @@ int git_clone(char *url)
 	snprintf(git_dir, PATH_MAX, "%s/%s", CONFIG.gitrepos_dir,
 			GRASP.pkgname);
 	argv[3] = git_dir;
-	ret = spawn("/usr/bin/git", argv);
+	ret = spawn(GIT_BIN_PATH, argv);
 	write_gbp(GRASP.pkgname);
 
 	return ret;
@@ -155,7 +155,7 @@ int git_pull(char *url, char *branch)
 	snprintf(git_dir, PATH_MAX, "%s/%s/.git", CONFIG.gitrepos_dir,
 			GRASP.pkgname);
 	setenv("GIT_DIR", git_dir, 1);
-	ret = spawn("/usr/bin/git", argv);
+	ret = spawn(GIT_BIN_PATH, argv);
 	write_gbp(GRASP.pkgname);
 	unsetenv("GIT_DIR");
 
@@ -171,7 +171,7 @@ int git_checkout(char *branch)
 	snprintf(git_dir, PATH_MAX, "%s/%s", CONFIG.gitrepos_dir,
 			GRASP.pkgname);
 	chdir(git_dir);
-	ret = spawn("/usr/bin/git", argv);
+	ret = spawn(GIT_BIN_PATH, argv);
 	chdir(PWD);
 
 	return ret;
@@ -198,8 +198,8 @@ int git_export(char *branch, char *dir)
 	snprintf(git_dir, PATH_MAX, "%s/%s/.git", CONFIG.gitrepos_dir,
 			GRASP.pkgname);
 
-	snprintf(cmd, 1024, "/usr/bin/git-archive --format=tar %s | "
-			"( cd %s && tar xf - )", branch, dir);
+	snprintf(cmd, 1024, "%s archive --format=tar %s | "
+			"( cd %s && tar xf - )", GIT_BIN_PATH, branch, dir);
 	setenv("GIT_DIR", git_dir, 1);
 	ret = system(cmd);
 	unsetenv("GIT_DIR");
