@@ -48,6 +48,7 @@ int get_grasp()
 
 	/* validate the grasp config file */
 	CONFIG_VALIDATE_OPT(GRASP.format, grasp_config, "format");
+	CONFIG_VALIDATE_OPT(GRASP.component, grasp_config, "component");
 
 	/* minimal number of tarballs is 0 (for native packages) */
 	GRASP.ntarballs = config_get_item_values(grasp_config, "tarball_url");

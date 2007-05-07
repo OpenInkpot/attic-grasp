@@ -53,7 +53,8 @@ PROGRAMS = $(bin_PROGRAMS)
 am_grasp_OBJECTS = grasp-main.$(OBJEXT) grasp-transport.$(OBJEXT) \
 	grasp-commands.$(OBJEXT) grasp-conffile.$(OBJEXT) \
 	grasp-graspfile.$(OBJEXT) grasp-system.$(OBJEXT) \
-	grasp-package.$(OBJEXT) grasp-messages.$(OBJEXT)
+	grasp-package.$(OBJEXT) grasp-messages.$(OBJEXT) \
+	grasp-pool.$(OBJEXT)
 grasp_OBJECTS = $(am_grasp_OBJECTS)
 am__DEPENDENCIES_1 =
 grasp_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
@@ -66,6 +67,7 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/grasp-main.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/grasp-messages.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/grasp-package.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/grasp-pool.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/grasp-system.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/grasp-transport.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
@@ -192,7 +194,7 @@ sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 grasp_SOURCES = main.c transport.c commands.c conffile.c graspfile.c \
-		system.c package.c messages.c
+		system.c package.c messages.c pool.c
 
 grasp_CFLAGS = -DBUILD_DATE="\"$(BUILD_DATE)\""
 grasp_LDADD = $(CURL_LIBS) $(POPT_LIBS)
@@ -273,6 +275,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/grasp-main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/grasp-messages.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/grasp-package.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/grasp-pool.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/grasp-system.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/grasp-transport.Po@am__quote@
 
@@ -491,6 +494,30 @@ grasp-messages.lo: messages.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/grasp-messages.Plo' tmpdepfile='$(DEPDIR)/grasp-messages.TPlo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(grasp_CFLAGS) $(CFLAGS) -c -o grasp-messages.lo `test -f 'messages.c' || echo '$(srcdir)/'`messages.c
+
+grasp-pool.o: pool.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(grasp_CFLAGS) $(CFLAGS) -MT grasp-pool.o -MD -MP -MF "$(DEPDIR)/grasp-pool.Tpo" -c -o grasp-pool.o `test -f 'pool.c' || echo '$(srcdir)/'`pool.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/grasp-pool.Tpo" "$(DEPDIR)/grasp-pool.Po"; else rm -f "$(DEPDIR)/grasp-pool.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='pool.c' object='grasp-pool.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/grasp-pool.Po' tmpdepfile='$(DEPDIR)/grasp-pool.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(grasp_CFLAGS) $(CFLAGS) -c -o grasp-pool.o `test -f 'pool.c' || echo '$(srcdir)/'`pool.c
+
+grasp-pool.obj: pool.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(grasp_CFLAGS) $(CFLAGS) -MT grasp-pool.obj -MD -MP -MF "$(DEPDIR)/grasp-pool.Tpo" -c -o grasp-pool.obj `if test -f 'pool.c'; then $(CYGPATH_W) 'pool.c'; else $(CYGPATH_W) '$(srcdir)/pool.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/grasp-pool.Tpo" "$(DEPDIR)/grasp-pool.Po"; else rm -f "$(DEPDIR)/grasp-pool.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='pool.c' object='grasp-pool.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/grasp-pool.Po' tmpdepfile='$(DEPDIR)/grasp-pool.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(grasp_CFLAGS) $(CFLAGS) -c -o grasp-pool.obj `if test -f 'pool.c'; then $(CYGPATH_W) 'pool.c'; else $(CYGPATH_W) '$(srcdir)/pool.c'; fi`
+
+grasp-pool.lo: pool.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(grasp_CFLAGS) $(CFLAGS) -MT grasp-pool.lo -MD -MP -MF "$(DEPDIR)/grasp-pool.Tpo" -c -o grasp-pool.lo `test -f 'pool.c' || echo '$(srcdir)/'`pool.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/grasp-pool.Tpo" "$(DEPDIR)/grasp-pool.Plo"; else rm -f "$(DEPDIR)/grasp-pool.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='pool.c' object='grasp-pool.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/grasp-pool.Plo' tmpdepfile='$(DEPDIR)/grasp-pool.TPlo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(grasp_CFLAGS) $(CFLAGS) -c -o grasp-pool.lo `test -f 'pool.c' || echo '$(srcdir)/'`pool.c
 
 mostlyclean-libtool:
 	-rm -f *.lo

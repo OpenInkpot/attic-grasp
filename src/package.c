@@ -72,9 +72,14 @@ int pkg_cmd_prologue(char *pkgname)
 		return GE_ERROR;
 	}
 
+	r = get_grasp(GRASP.pkgname);
+	if (r)
+		return GE_ERROR;
+
 	/* output repository */
-	snprintf(GRASP.pkg_out_dir, PATH_MAX, "%s/%s",
-			CONFIG.output_dir, GRASP.pkgname);
+	/* this has to be done _after_ get_grasp(), because pool_mkpath()
+	 * can potentially need component name */
+	pool_mkpath(GRASP.pkg_out_dir, GRASP.component, GRASP.pkgname);
 	r = check_and_create_dir(GRASP.pkg_out_dir);
 	if (r != GE_OK) {
 		SHOUT("Error: failed to create %s.\n"
@@ -82,10 +87,6 @@ int pkg_cmd_prologue(char *pkgname)
 				GRASP.pkg_out_dir);
 		return GE_ERROR;
 	}
-
-	r = get_grasp(GRASP.pkgname);
-	if (r)
-		return GE_ERROR;
 
 	for (i = 0; i < GRASP.ntarballs; i++) {
 		/* strip tarball name from tarball_url */

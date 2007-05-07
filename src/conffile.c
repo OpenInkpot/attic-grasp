@@ -230,6 +230,7 @@ int global_config_init()
 {
 	char *homedir = getenv("HOME");
 	char confpath[PATH_MAX];
+	int f;
 
 	snprintf(confpath, PATH_MAX, "%s/.grasp", homedir);
 	global_config = config_read(confpath);
@@ -244,8 +245,16 @@ int global_config_init()
 	CONFIG_VALIDATE_OPT(CONFIG.tarballs_dir, global_config, "tarballs_dir");
 	CONFIG_VALIDATE_OPT(CONFIG.output_dir, global_config, "output_dir");
 	CONFIG_VALIDATE_OPT(CONFIG.reget_grasp, global_config, "reget_grasp");
+	CONFIG_VALIDATE_OPT(CONFIG.repo_format, global_config, "repo_format");
 
-	return 0;
+	/* values in the range of [0..2] are accepted */
+	f = strtoul(CONFIG.repo_format, NULL, 10);
+	if (f == ULONG_MAX || (f > 2)) {
+		SHOUT("repo_format has incorrect value\n");
+		return GE_ERROR;
+	}
+
+	return GE_OK;
 }
 
 void global_config_done()

@@ -84,6 +84,7 @@ typedef struct __global_config {
 	char *tarballs_dir;   /* local path to store tarballs in  */
 	char *output_dir;     /* local path to the output repo    */
 	char *reget_grasp;    /* do download grasp file anyway    */
+	char *repo_format;    /* format of the output repo's pool */
 }       global_config_t;
 
 extern global_config_t CONFIG;
@@ -95,6 +96,7 @@ typedef struct __grasp_config {
 	char **tarball_url;   /* urls of package's upstream tarballs */
 	char **tarball_md5;   /* md5s of package's upstream tarballs */
 	char **branch;        /* names of git branches               */
+	char *component;      /* sw component name, e.g. host-tools  */
 	char *format;         /* grasp config file format version    */
 
 	/* values below are not read from grasp file, but filled in
