@@ -3,7 +3,7 @@ Maintainer: Alexander Shishkin <virtuoso@slind.org>
 Section: devel
 Priority: optional
 Standards-Version: 3.6.2
-Build-Depends: libc6-dev, libcurl3-dev
+Build-Depends: libc6-dev, libcurl-dev, libpopt-dev
 
 Package: grasp
 Architecture: any
