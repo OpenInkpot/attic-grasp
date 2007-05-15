@@ -10,22 +10,22 @@ static __inline__ int check_dir(char *path)
 
 	if (r == EACCES || r == EPERM) {
 		/* it isn't accessible */
-		DBG("Path %s already exists and is inaccessible\n", path);
+		DBG("Dir %s already exists and is inaccessible\n", path);
 
 		return GE_ACCESS;
 	} else if (r == EROFS || r == EFAULT) {
 		/* or otherwise broken */
-		DBG("Path %s is broken.\n", path);
+		DBG("Dir %s is broken.\n", path);
 
 		return GE_ACCESS;
 	} else if (r == ENOENT) {
 		/* it doesn't exist */
-		DBG("# path %s doesn't exist\n", path);
+		DBG("Dir %s doesn't exist\n", path);
 
 		return GE_NOENT;
 	} else if (r == 0) {
 		/* it does exist */
-		DBG("# path %s does exist\n", path);
+		DBG("Dir %s does exist\n", path);
 
 		return GE_OK;
 	}
@@ -47,27 +47,27 @@ static __inline__ int check_file(char *path)
 
 	if (r == EACCES || r == EPERM) {
 		/* it isn't accessible */
-		DBG("Path %s already exists and is inaccessible\n", path);
+		DBG("File %s already exists and is inaccessible\n", path);
 
 		return GE_ACCESS;
 	} else if (r == EROFS || r == EFAULT) {
 		/* or otherwise broken */
-		DBG("Path %s is broken.\n", path);
+		DBG("File %s is broken.\n", path);
 
 		return GE_ACCESS;
 	} else if (r == ENOENT) {
 		/* it doesn't exist */
-		DBG("# path %s doesn't exist\n", path);
+		DBG("File %s doesn't exist\n", path);
 
 		return GE_NOENT;
 	} else if (r == 0) {
 		/* it does exist */
-		DBG("# path %s does exist\n", path);
+		DBG("File %s does exist\n", path);
 
 		return GE_OK;
 	}
 
-	DBG("# unexpected error %d while trying to resolve %s\n",
+	DBG("Unexpected error %d while trying to resolve file %s\n",
 			r, path);
 
 	return GE_ERROR;
@@ -79,7 +79,7 @@ static __inline__ int check_and_create_dir(char *path)
 
 	if (r == GE_NOENT) {
 		if (mkdir_p(path, 0755)) {
-			DBG("# failed to create %s\n", path);
+			DBG("Failed to create dir %s\n", path);
 			return GE_ERROR;
 		}
 
