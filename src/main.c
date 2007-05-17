@@ -53,7 +53,9 @@ static void sigint_handler(int sig)
 void init()
 {
 	struct sigaction sa;
+	int gv;
 
+	/* initialize output */
 	verbosity = VERB_NORMAL;
 	OUT[STD] = stdout;
 	OUT[ERR] = stderr;
@@ -68,6 +70,8 @@ void init()
 	sa.sa_handler = sigint_handler;
 	sigfillset(&sa.sa_mask);
 	sigaction(SIGINT, &sa, &__sigint_act_saved);
+
+	git_init();
 }
 
 void leave(int code, int full)

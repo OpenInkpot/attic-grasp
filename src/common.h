@@ -23,6 +23,7 @@
 #define URL_MAX 128
 #define PKGNAME_MAX 32
 #define MD5_MAX 33 /* add nul character */
+#define REFSPEC_MAX 128
 
 #include "types.h"
 #include "conffile.h"

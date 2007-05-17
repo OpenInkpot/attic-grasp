@@ -2,10 +2,21 @@
 
 extern char **environ;
 
+/*
+ * execute a thing (fork, exec, wait)
+ */
 int spawn(char *cmd, char **argv)
 {
 	pid_t pid;
+	int i = 0;
 	int ret;
+
+	if (verbosity >= VERB_DEBUG) {
+		DBG("going to execute:");
+		while (argv[i])
+			output(ERR, VERB_DEBUG, " %s", argv[i++]);
+		output(ERR, VERB_DEBUG, "\n");
+	}
 
 	pid = fork();
 	if (pid) {
@@ -13,7 +24,7 @@ int spawn(char *cmd, char **argv)
 	} else {
 		ret = execve(cmd, argv, environ);
 		if (ret) {
-			DBG("# exec %s failed\n", cmd);
+			DBG("exec %s failed\n", cmd);
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -21,6 +32,9 @@ int spawn(char *cmd, char **argv)
 	return ret;
 }
 
+/*
+ * move a thing from 'oldpath' to a 'newpath'
+ */
 int mv(char *oldpath, char *newpath)
 {
 	char *argv[] = { "mv", oldpath, newpath, NULL };
@@ -33,6 +47,9 @@ int mv(char *oldpath, char *newpath)
 	return GE_OK;
 }
 
+/*
+ * unpack a tarball to a given directory
+ */
 int tar_zxf(char *tarball, char *dir)
 {
 	char *argv[] = { "tar", "vzxf", tarball, "-C", dir, NULL };
@@ -45,6 +62,9 @@ int tar_zxf(char *tarball, char *dir)
 	return GE_OK;
 }
 
+/*
+ * remove a directory (with all contents)
+ */
 int rm_rf(char *dir)
 {
 	char *argv[] = { "rm", "-rf", dir, NULL };
@@ -57,6 +77,9 @@ int rm_rf(char *dir)
 	return GE_OK;
 }
 
+/*
+ * create a directory (with all the missing parent directories)
+ */
 int mkdir_p(char *dst, mode_t mode)
 {
 	char *argv[] = { "mkdir", "-p", dst, NULL };
@@ -69,6 +92,9 @@ int mkdir_p(char *dst, mode_t mode)
 	return GE_OK;
 }
 
+/*
+ * copy something from 'src' to 'dst'
+ */
 int copy(char *src, char *dst)
 {
 	char *argv[] = { "cp", src, dst, NULL };
@@ -81,6 +107,9 @@ int copy(char *src, char *dst)
 	return GE_OK;
 }
 
+/*
+ * make 'dst' a hardlink to 'src', if possible, copy otherwise
+ */
 int link_or_copy(char *src, char *dst)
 {
 	int ret;
@@ -92,6 +121,9 @@ int link_or_copy(char *src, char *dst)
 	return (ret ? GE_ERROR : GE_OK);
 }
 
+/*
+ * calculate md5 hash of a 'file'
+ */
 int md5sum(char *file, char *buf)
 {
 	FILE *p;
@@ -109,6 +141,9 @@ int md5sum(char *file, char *buf)
 	return 0;
 }
 
+/*
+ * write gbp.conf to a local git repository
+ */
 void write_gbp(char *pkgname)
 {
 	FILE *gbp;
@@ -131,52 +166,9 @@ void write_gbp(char *pkgname)
 	fclose(gbp);
 }
 
-int git_clone(char *url)
-{
-	char *argv[] = { "git", "clone", url, NULL, NULL };
-	char git_dir[PATH_MAX];
-	int ret;
-
-	snprintf(git_dir, PATH_MAX, "%s/%s", CONFIG.gitrepos_dir,
-			GRASP.pkgname);
-	argv[3] = git_dir;
-	ret = spawn(GIT_BIN_PATH, argv);
-	write_gbp(GRASP.pkgname);
-
-	return ret;
-}
-
-int git_pull(char *url, char *branch)
-{
-	char *argv[] = { "git", "pull", url, branch, NULL };
-	char git_dir[PATH_MAX];
-	int ret;
-
-	snprintf(git_dir, PATH_MAX, "%s/%s/.git", CONFIG.gitrepos_dir,
-			GRASP.pkgname);
-	setenv("GIT_DIR", git_dir, 1);
-	ret = spawn(GIT_BIN_PATH, argv);
-	write_gbp(GRASP.pkgname);
-	unsetenv("GIT_DIR");
-
-	return ret;
-}
-
-int git_checkout(char *branch)
-{
-	char *argv[] = { "git", "checkout", branch, NULL };
-	char git_dir[PATH_MAX];
-	int ret;
-
-	snprintf(git_dir, PATH_MAX, "%s/%s", CONFIG.gitrepos_dir,
-			GRASP.pkgname);
-	chdir(git_dir);
-	ret = spawn(GIT_BIN_PATH, argv);
-	chdir(PWD);
-
-	return ret;
-}
-
+/*
+ * call 'dpkg-source' to build a source package
+ */
 int dpkg_source(char *dir, char *where)
 {
 	char *argv[] = { "dpkg-source", "-b", dir, NULL };
@@ -189,40 +181,10 @@ int dpkg_source(char *dir, char *where)
 	return ret;
 }
 
-int git_export(char *branch, char *dir)
-{
-	char git_dir[PATH_MAX];
-	char cmd[1024];
-	int ret;
-
-	snprintf(git_dir, PATH_MAX, "%s/%s/.git", CONFIG.gitrepos_dir,
-			GRASP.pkgname);
-
-	snprintf(cmd, 1024, "%s archive --format=tar %s | "
-			"( cd %s && tar xf - )", GIT_BIN_PATH, branch, dir);
-	setenv("GIT_DIR", git_dir, 1);
-	ret = system(cmd);
-	unsetenv("GIT_DIR");
-
-	return ret;
-}
-
-int git_pull_all(char *url)
-{
-	int ret = 0;
-	int i;
-
-	for (i = 0; i < GRASP.nbranches; i++) {
-		ret = git_checkout(GRASP.branch[i]);
-		if (ret) return GE_ERROR;
-
-		ret = git_pull(url, GRASP.branch[i]);
-		if (ret) return GE_ERROR;
-	}
-
-	return ret;
-}
-
+/*
+ * find a first directory in a given directory
+ * (a lame way to detect how a directory inside a tarball was named)
+ */
 int find_first_dir(char *where, char **res)
 {
 	int ret;
@@ -258,6 +220,10 @@ int find_first_dir(char *where, char **res)
 	return (*res ? GE_OK : GE_ERROR);
 }
 
+/*
+ * build a source package of n'th branch of a local package's repo
+ * (and put it to output_dir)
+ */
 int git_buildpackage(int nbranch)
 {
 	int ret;

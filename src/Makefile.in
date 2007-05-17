@@ -54,7 +54,7 @@ am_grasp_OBJECTS = grasp-main.$(OBJEXT) grasp-transport.$(OBJEXT) \
 	grasp-commands.$(OBJEXT) grasp-conffile.$(OBJEXT) \
 	grasp-graspfile.$(OBJEXT) grasp-system.$(OBJEXT) \
 	grasp-package.$(OBJEXT) grasp-messages.$(OBJEXT) \
-	grasp-pool.$(OBJEXT)
+	grasp-pool.$(OBJEXT) grasp-git.$(OBJEXT)
 grasp_OBJECTS = $(am_grasp_OBJECTS)
 am__DEPENDENCIES_1 =
 grasp_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
@@ -63,6 +63,7 @@ depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 @AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/grasp-commands.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/grasp-conffile.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/grasp-git.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/grasp-graspfile.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/grasp-main.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/grasp-messages.Po \
@@ -194,7 +195,7 @@ sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 grasp_SOURCES = main.c transport.c commands.c conffile.c graspfile.c \
-		system.c package.c messages.c pool.c
+		system.c package.c messages.c pool.c git.c
 
 grasp_CFLAGS = -DBUILD_DATE="\"$(BUILD_DATE)\""
 grasp_LDADD = $(CURL_LIBS) $(POPT_LIBS)
@@ -211,9 +212,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  src/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu  src/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign  src/Makefile
+	  $(AUTOMAKE) --gnu  src/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -271,6 +272,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/grasp-commands.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/grasp-conffile.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/grasp-git.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/grasp-graspfile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/grasp-main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/grasp-messages.Po@am__quote@
@@ -518,6 +520,30 @@ grasp-pool.lo: pool.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/grasp-pool.Plo' tmpdepfile='$(DEPDIR)/grasp-pool.TPlo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(grasp_CFLAGS) $(CFLAGS) -c -o grasp-pool.lo `test -f 'pool.c' || echo '$(srcdir)/'`pool.c
+
+grasp-git.o: git.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(grasp_CFLAGS) $(CFLAGS) -MT grasp-git.o -MD -MP -MF "$(DEPDIR)/grasp-git.Tpo" -c -o grasp-git.o `test -f 'git.c' || echo '$(srcdir)/'`git.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/grasp-git.Tpo" "$(DEPDIR)/grasp-git.Po"; else rm -f "$(DEPDIR)/grasp-git.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='git.c' object='grasp-git.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/grasp-git.Po' tmpdepfile='$(DEPDIR)/grasp-git.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(grasp_CFLAGS) $(CFLAGS) -c -o grasp-git.o `test -f 'git.c' || echo '$(srcdir)/'`git.c
+
+grasp-git.obj: git.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(grasp_CFLAGS) $(CFLAGS) -MT grasp-git.obj -MD -MP -MF "$(DEPDIR)/grasp-git.Tpo" -c -o grasp-git.obj `if test -f 'git.c'; then $(CYGPATH_W) 'git.c'; else $(CYGPATH_W) '$(srcdir)/git.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/grasp-git.Tpo" "$(DEPDIR)/grasp-git.Po"; else rm -f "$(DEPDIR)/grasp-git.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='git.c' object='grasp-git.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/grasp-git.Po' tmpdepfile='$(DEPDIR)/grasp-git.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(grasp_CFLAGS) $(CFLAGS) -c -o grasp-git.obj `if test -f 'git.c'; then $(CYGPATH_W) 'git.c'; else $(CYGPATH_W) '$(srcdir)/git.c'; fi`
+
+grasp-git.lo: git.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(grasp_CFLAGS) $(CFLAGS) -MT grasp-git.lo -MD -MP -MF "$(DEPDIR)/grasp-git.Tpo" -c -o grasp-git.lo `test -f 'git.c' || echo '$(srcdir)/'`git.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/grasp-git.Tpo" "$(DEPDIR)/grasp-git.Plo"; else rm -f "$(DEPDIR)/grasp-git.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='git.c' object='grasp-git.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/grasp-git.Plo' tmpdepfile='$(DEPDIR)/grasp-git.TPlo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(grasp_CFLAGS) $(CFLAGS) -c -o grasp-git.lo `test -f 'git.c' || echo '$(srcdir)/'`git.c
 
 mostlyclean-libtool:
 	-rm -f *.lo
