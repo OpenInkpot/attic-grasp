@@ -147,10 +147,11 @@ int git_clone(char *url)
 
 /*
  * checkout branch named 'branch' to a local copy
+ * note to self: forced checkout wouldn't hurt here, would it?
  */
 int git_checkout(char *branch)
 {
-	char *argv[] = { "git", "checkout", branch, NULL };
+	char *argv[] = { "git", "checkout", "-f", branch, NULL };
 	char git_dir[PATH_MAX];
 	int ret;
 
