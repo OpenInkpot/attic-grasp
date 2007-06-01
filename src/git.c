@@ -86,18 +86,18 @@ int git_pull(char *url, char *branch)
 	char refspec[REFSPEC_MAX];
 	int ret;
 
-	/* put up $GIT_DIR */
-	snprintf(git_dir, PATH_MAX, "%s/%s/.git", CONFIG.gitrepos_dir,
+	/* calculate working copy directory */
+	snprintf(git_dir, PATH_MAX, "%s/%s", CONFIG.gitrepos_dir,
 			GRASP.pkgname);
-	setenv("GIT_DIR", git_dir, 1);
 
 	/* calculate refspec */
 	snprintf(refspec, REFSPEC_MAX, "%s:%s", branch, branch);
 	argv[3] = refspec;
 
+	chdir(git_dir);
 	ret = spawn(GIT_BIN_PATH, argv);
 	write_gbp(GRASP.pkgname);
-	unsetenv("GIT_DIR");
+	chdir(PWD);
 
 	return ret;
 }
