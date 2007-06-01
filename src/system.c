@@ -52,8 +52,13 @@ int mv(char *oldpath, char *newpath)
  */
 int tar_zxf(char *tarball, char *dir)
 {
-	char *argv[] = { "tar", "vzxf", tarball, "-C", dir, NULL };
+	char tar_opts[] = { 'z', 'x', 'f', '\0', '\0' };
+	char *argv[] = { "tar", tar_opts, tarball, "-C", dir, NULL, NULL };
 	int ret;
+
+	/* turn on tar's verbosity as well if we have to */
+	if (verbosity > VERB_NORMAL)
+		tar_opts[3] = 'v';
 
 	ret = spawn(TAR_BIN_PATH, argv);
 	if (ret)
