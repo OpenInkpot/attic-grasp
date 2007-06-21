@@ -31,7 +31,7 @@ int pool_mkpath(char *path, char *comp, char *pkgname)
 	else
 		sprintf(pfx, "%c", pkgname[0]);
 
-	(fmtfn[2])(path, pfx, comp, pkgname);
+	(fmtfn[CONFIG.repo_format[0] - '0'])(path, pfx, comp, pkgname);
 
 	DBG("pool path: %s\n", path);
 	return 0;
