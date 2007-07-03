@@ -1,11 +1,12 @@
 Source: grasp
 Maintainer: Alexander Shishkin <virtuoso@slind.org>
-Section: devel
+Section: host-tools
 Priority: optional
 Standards-Version: 3.6.2
-Build-Depends: libc6-dev, libcurl-dev, libpopt-dev
+Build-Depends: libc6-dev, libcurl-dev, libpopt-dev, git-core
 
 Package: grasp
+Section: host-tools
 Architecture: any
 Depends: ${shlibs:Depends}, git-core
 Description: maintains git repos with deb packages
