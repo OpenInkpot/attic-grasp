@@ -69,7 +69,7 @@ int http_get_file(char *url, char *name)
 	curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &ret);
 	DBG("response code: %d\n", ret);
 	if (h.file) fclose(h.file);
-	if (ret != 200) goto out_err;
+	if ((ret != 0) && (ret != 200)) goto out_err;
 
 	goto out;
 out_err:

@@ -59,6 +59,7 @@ int mv(char *oldpath, char *newpath);
 int md5sum(char *file, char *buf);
 int git_clone(char *url);
 int git_pull(char *url, char *branch);
+char* git_convert_url(const char *url);
 
 /* package.c */
 int pkg_cmd_prologue(char *pkgname);

@@ -81,7 +81,7 @@ int git_init()
  */
 int git_pull(char *url, char *branch)
 {
-	char *argv[] = { "git", "pull", url, NULL, NULL };
+	char *argv[] = { "git", "pull", git_convert_url(url), NULL, NULL };
 	char git_dir[PATH_MAX];
 	char refspec[REFSPEC_MAX];
 	int ret;
@@ -109,7 +109,7 @@ int git_pull(char *url, char *branch)
  */
 int git_clone(char *url)
 {
-	char *argv[] = { "git", "clone", url, NULL, NULL };
+	char *argv[] = { "git", "clone", git_convert_url(url), NULL, NULL };
 	char git_dir[PATH_MAX];
 	int ret, i;
 
@@ -203,4 +203,23 @@ int git_pull_all(char *url)
 
 	return ret;
 }
+
+/*
+ * Process the url to be git-compatible. Currently, just eat out file:// in
+ * the beginning.
+ */
+char* git_convert_url(const char *url)
+{
+	char *p;
+
+	if (url == NULL)
+		return NULL;
+
+	if ((p = strstr(url, "file://")) == url)
+		/* It is in the very beginning, eat it */
+		return (url += strlen("file://"));
+	/* Or just return what we've been passed. */
+	return url;
+}
+
 
