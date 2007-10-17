@@ -76,12 +76,39 @@ int git_init()
 }
 
 /*
- * fetch remote branch 'branch' to a local branch with the same name
+ * pull remote branch 'branch' to a local branch with the same name
  * from remote repository 'url'
  */
 int git_pull(char *url, char *branch)
 {
 	char *argv[] = { "git", "pull", git_convert_url(url), NULL, NULL };
+	char git_dir[PATH_MAX];
+	char refspec[REFSPEC_MAX];
+	int ret;
+
+	/* calculate working copy directory */
+	snprintf(git_dir, PATH_MAX, "%s/%s", CONFIG.gitrepos_dir,
+			GRASP.pkgname);
+
+	/* calculate refspec */
+	snprintf(refspec, REFSPEC_MAX, "%s:%s", branch, branch);
+	argv[3] = refspec;
+
+	chdir(git_dir);
+	ret = spawn(GIT_BIN_PATH, argv);
+	write_gbp(GRASP.pkgname);
+	chdir(PWD);
+
+	return ret;
+}
+
+/*
+ * fetch remote branch 'branch' to a local branch with the same name
+ * from remote repository 'url'
+ */
+int git_fetch(char *url, char *branch)
+{
+	char *argv[] = { "git", "fetch", git_convert_url(url), NULL, NULL };
 	char git_dir[PATH_MAX];
 	char refspec[REFSPEC_MAX];
 	int ret;
@@ -133,7 +160,7 @@ int git_clone(char *url)
 			if (!strcmp(GRASP.branch[i], "master"))
 				continue;
 
-			ret = git_pull(url, GRASP.branch[i]);
+			ret = git_fetch(url, GRASP.branch[i]);
 			if (ret != GE_OK) {
 				SHOUT("Failed to fetch branch %s\n",
 						GRASP.branch[i]);
