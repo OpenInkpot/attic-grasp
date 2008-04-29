@@ -3,7 +3,7 @@ Maintainer: Alexander Shishkin <virtuoso@slind.org>
 Section: host-tools
 Priority: optional
 Standards-Version: 3.6.2
-Build-Depends: libc6-dev, libcurl-dev, libpopt-dev, git-core
+Build-Depends: libc6-dev, libcurl-dev, libpopt-dev, git-core, debhelper
 
 Package: grasp
 Section: host-tools
