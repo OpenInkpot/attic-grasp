@@ -10,12 +10,7 @@ grasp_config_t GRASP;
  */
 int get_grasp()
 {
-	char graspfile_url[URL_MAX];
 	int c;
-
-	/* compute grasp file URL */
-	snprintf(graspfile_url, URL_MAX, "%s/%s.git/grasp",
-			CONFIG.gitbase_url, GRASP.pkgname);
 
 	/* check if local git repo exists at this point */
 	snprintf(GRASP.graspfile_local, PATH_MAX, "%s/%s/.git",
@@ -36,8 +31,24 @@ int get_grasp()
 		GRASP.move_grasp = 0;
 	}
 
-	if (c != GE_OK)
-		http_get_file(graspfile_url, GRASP.graspfile_local);
+	if (c != GE_OK) {
+		int i;
+		for (i = 0; i < CONFIG.ngitbase_urls; i++) {
+			char graspfile_url[URL_MAX];
+			int ret;
+
+			/* compute grasp file URL */
+			snprintf(graspfile_url, URL_MAX, "%s/%s.git/grasp",
+					 CONFIG.gitbase_urls[i], GRASP.pkgname);
+
+			ret = http_get_file(graspfile_url, GRASP.graspfile_local);
+			if (ret == 0 || ret == 200)
+				break;
+
+			SAY("%s is not found, trying next git repository.\n",
+				graspfile_url);
+		}
+	}
 
 	grasp_config = config_read(GRASP.graspfile_local);
 	if (grasp_config < 0) {

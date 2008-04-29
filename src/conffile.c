@@ -231,6 +231,7 @@ int global_config_init()
 	char *homedir = getenv("HOME");
 	char confpath[PATH_MAX];
 	int f;
+	int n;
 
 	snprintf(confpath, PATH_MAX, "%s/.grasp", homedir);
 	global_config = config_read(confpath);
@@ -240,7 +241,11 @@ int global_config_init()
 	}
 
 	/* validate the global config file */
-	CONFIG_VALIDATE_OPT(CONFIG.gitbase_url, global_config, "gitbase_url");
+	CONFIG.ngitbase_urls = config_get_item_values(global_config,"gitbase_url");
+	CONFIG.gitbase_urls = xcalloc(CONFIG.ngitbase_urls, sizeof(char *));
+	CONFIG_VALIDATE_OPTN(CONFIG.gitbase_urls, global_config, "gitbase_url",
+		CONFIG.ngitbase_urls);
+
 	CONFIG_VALIDATE_OPT(CONFIG.gitrepos_dir, global_config, "gitrepos_dir");
 	CONFIG_VALIDATE_OPT(CONFIG.tarballs_dir, global_config, "tarballs_dir");
 	CONFIG_VALIDATE_OPT(CONFIG.output_dir, global_config, "output_dir");

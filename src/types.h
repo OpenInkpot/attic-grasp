@@ -38,6 +38,13 @@ typedef void*         VP;
 		__ret;                     \
 	})
 
+#define xcalloc(__n, __s) ({                    \
+		void *__ret = calloc(__n, __s); \
+		if (!__ret)                     \
+			return GE_ERROR;            \
+		__ret;                          \
+	})
+
 #define xfree(__p) do {                      \
 		void **__P = (void *)&(__p); \
 		if (*__P)                    \

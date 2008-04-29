@@ -137,7 +137,17 @@ int main(int argc, const char **argv, const char **envp)
 	c = global_config_init();
 	if (c) leave(EXIT_FAILURE, 0);
 
-	CMDLINE_CONFIG(CONFIG.gitbase_url, gitbase_url)
+	if (CMDLINE_gitbase_url) {
+		int i;
+		for (i = 0; i < CONFIG.ngitbase_urls; ++i)
+			free(CONFIG.gitbase_urls[i]);
+		free(CONFIG.gitbase_urls);
+
+		CONFIG.ngitbase_urls = 1;
+		CONFIG.gitbase_urls = xmalloc(1 * sizeof(char *));
+		CONFIG.gitbase_urls[0] = CMDLINE_gitbase_url;
+	}
+
 	CMDLINE_CONFIG(CONFIG.gitrepos_dir, gitrepos_dir)
 	CMDLINE_CONFIG(CONFIG.tarballs_dir, tarballs_dir)
 

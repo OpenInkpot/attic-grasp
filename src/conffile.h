@@ -79,7 +79,8 @@ US              config_get_item_value(int n, US name, int no);
  * These commonly come from ~/.grasp.
  */
 typedef struct __global_config {
-	char *gitbase_url;    /* url of a root for git repos      */
+	int  ngitbase_urls;
+	char **gitbase_urls;  /* urls of a roots for git repos    */
 	char *gitrepos_dir;   /* local path to store git repos in */
 	char *tarballs_dir;   /* local path to store tarballs in  */
 	char *output_dir;     /* local path to the output repo    */

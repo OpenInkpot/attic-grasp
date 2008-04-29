@@ -26,7 +26,6 @@ int cmd_build(void *data)
 int cmd_update(void *data)
 {
 	int ret, i;
-	char git_url[URL_MAX];
 	char tarball_md5[MD5_MAX + 1];
 	char *branch = (char *)data;
 
@@ -48,16 +47,27 @@ int cmd_update(void *data)
 		}
 	}
 
-	snprintf(git_url, URL_MAX, "%s/%s.git", CONFIG.gitbase_url,
-			GRASP.pkgname);
+	for (i = 0; i < CONFIG.ngitbase_urls; ++i)
+	{
+		char git_url[URL_MAX];
 
-	if (branch) {
-		SAY("Doing git pull %s [%s]\n", git_url, branch);
-		ret = git_pull(git_url, branch);
-	} else
-		ret = git_pull_all(git_url);
+		snprintf(git_url, URL_MAX, "%s/%s.git", CONFIG.gitbase_urls[i],
+				 GRASP.pkgname);
 
-	return (ret ? GE_ERROR : GE_OK);
+		if (branch) {
+			SAY("Doing git pull %s [%s]\n", git_url, branch);
+			ret = git_pull(git_url, branch);
+		} else
+			ret = git_pull_all(git_url);
+
+		if (!ret)
+			return GE_OK;
+
+		SAY("Unable to pull from %s, trying next repository\n", git_url);
+	}
+
+	SAY("No more repositories. Bailing out.\n");
+	return GE_ERROR;
 }
 
 /*
@@ -88,11 +98,20 @@ int cmd_getpkg(void *data)
 		}
 	}
 
-	snprintf(git_url, URL_MAX, "%s/%s.git", CONFIG.gitbase_url,
-			GRASP.pkgname);
-	SAY("Doing git clone %s\n", git_url);
-	git_clone(git_url);
+	for (i = 0; i < CONFIG.ngitbase_urls; i++) {
+		snprintf(git_url, URL_MAX, "%s/%s.git", CONFIG.gitbase_urls[i],
+				 GRASP.pkgname);
+		SAY("Doing git clone %s\n", git_url);
 
-	return GE_OK;
+		ret = git_clone(git_url);
+
+		if (!ret)
+			return GE_OK;
+
+		SAY("Unable to clone from %s, trying next repository.\n", git_url);
+	}
+
+	SAY("No more repositories. Bailing out.\n");
+	return GE_ERROR;
 }
 

@@ -1,3 +1,9 @@
+grasp (0.2) unstable; urgency=low
+
+  * Added support for several git repositories.
+
+ -- Mikhail Gusarov <dottedmag@dottedmag.net>  Tue, 29 Apr 2008 14:52:21 +0700
+
 grasp (0.1) unstable; urgency=low
 
   * Initial upload.
