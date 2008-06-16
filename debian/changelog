@@ -1,3 +1,9 @@
+grasp (0.3) unstable; urgency=low
+
+  * Fixed grasp fetching single non-master branch using git >= 1.5
+
+ -- Mikhail Gusarov <dottedmag@dottedmag.net>  Mon, 16 Jun 2008 19:23:53 +0700
+
 grasp (0.2) unstable; urgency=low
 
   * Added support for several git repositories.
