@@ -153,8 +153,9 @@ int git_clone(char *url)
 
 	/* compatibility: GIT_CLONES_ALL:
 	 * emulate old git-clone behavior on newer gits */
-	if (!(compat & GIT_CLONES_ALL) && (GRASP.nbranches > 1)) {
-		DBG("git-clone doesn't fetch branches, fetching manually\n");
+	if (!(compat & GIT_CLONES_ALL)
+        && (GRASP.nbranches > 1 || strcmp(GRASP.branch[0], "master"))) {
+		DBG("git-clone doesn't fetch branches except 'master', fetching manually\n");
 
 		for (i = 0; i < GRASP.nbranches; i++) {
 			if (!strcmp(GRASP.branch[i], "master"))
